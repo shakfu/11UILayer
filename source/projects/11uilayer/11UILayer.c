@@ -100,8 +100,8 @@ void UILayerDef_mousedoubleclick(t_UILayerDef* x, t_object* patcherview, t_pt pt
 void UILayerDef_focusgained(t_UILayerDef* x, t_object* patcherview);
 void UILayerDef_focuslost(t_UILayerDef* x, t_object* patcherview);
 void UILayerDef_mousedragdelta(t_UILayerDef* x, t_object* patcherview, t_pt pt, long modifiers);
-long UILayerDef_key(t_UILayerDef* x, t_object* patcherview, long keycode, long modifiers, long textcharacter);
-long UILayerDef_keyup(t_UILayerDef* x, t_object* patcherview, long keycode, long modifiers, long textcharacter);
+void UILayerDef_key(t_UILayerDef* x, t_object* patcherview, long keycode, long modifiers, long textcharacter);
+void UILayerDef_keyup(t_UILayerDef* x, t_object* patcherview, long keycode, long modifiers, long textcharacter);
 
 t_max_err UILayerDef_setattr_target(t_UILayerDef* x, void* attr, long ac, t_atom* av);
 t_max_err UILayerDef_setattr_draghide(t_UILayerDef* x, void* attr, long ac, t_atom* av);
@@ -487,6 +487,7 @@ t_max_err UILayerDef_notify(t_UILayerDef* x, t_symbol* s, t_symbol* msg, void* s
             defer_low(x, (method)UILayerDef_bang, 0L, 0, 0L);
         }
     }
+    return MAX_ERR_NONE;
 }
 
 
@@ -1019,7 +1020,7 @@ void UILayerDef_focuslost(t_UILayerDef* x, t_object* patcherview)
 
 
 
-long UILayerDef_key(t_UILayerDef* x, t_object* patcherview, long keycode, long modifiers, long textcharacter)
+void UILayerDef_key(t_UILayerDef* x, t_object* patcherview, long keycode, long modifiers, long textcharacter)
 {
     if (DEBUG) post("UILayer_key ");
 
@@ -1041,7 +1042,7 @@ long UILayerDef_key(t_UILayerDef* x, t_object* patcherview, long keycode, long m
         object_method((t_object*)x->targetBox, _sym_key, patcherview, keycode, modifiers, textcharacter);
 }
 
-long UILayerDef_keyup(t_UILayerDef* x, t_object* patcherview, long keycode, long modifiers, long textcharacter)
+void UILayerDef_keyup(t_UILayerDef* x, t_object* patcherview, long keycode, long modifiers, long textcharacter)
 {
     if (DEBUG) post("UILayer_keyup ");
     if (!x->targetBox && x->targetname != _sym_nothing && x->pass_keyup)
@@ -1096,7 +1097,8 @@ void UILayerDef_do_cursor(t_UILayerDef* x, t_symbol* s, long argc, t_atom* argv)
         {
             int res;
             char filename[MAX_FILENAME_CHARS];
-            t_uint32  type_searched_for = NULL;
+            t_uint32  type_searched_for = 0;
+            // t_uint32  type_searched_for = NULL;
             t_uint32  type_found;
             short path_id = 0;
             t_symbol* theSym = atom_getsym(argv);
@@ -1104,7 +1106,8 @@ void UILayerDef_do_cursor(t_UILayerDef* x, t_symbol* s, long argc, t_atom* argv)
             int hotspot_y = 0;
             strncpy_zero(filename, theSym->s_name, MAX_FILENAME_CHARS);
 
-            type_searched_for = NULL;
+            type_searched_for = 0;
+            // type_searched_for = NULL;
             
             res = locatefile_extended(filename, &path_id, &type_found, NULL, 0);
 
